@@ -1,0 +1,429 @@
+<?php
+
+/**
+ * The admin-specific functionality of the plugin.
+ *
+ * @link       https://www.interactive-design.gr
+ * @since      1.0.0
+ *
+ * @package    Weberp
+ * @subpackage Weberp/admin
+ */
+
+/**
+ * The admin-specific functionality of the plugin.
+ *
+ * Defines the plugin name, version, and two examples hooks for how to
+ * enqueue the admin-specific stylesheet and JavaScript.
+ *
+ * @package    Weberp
+ * @subpackage Weberp/admin
+ * @author     George Nikolopoulos <georgen@interactive-design.gr>
+ */
+class Weberp_Admin
+{
+
+	/**
+	 * The ID of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $plugin_name    The ID of this plugin.
+	 */
+	private $plugin_name;
+
+	/**
+	 * The version of this plugin.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $version    The current version of this plugin.
+	 */
+	private $version;
+
+	/**
+	 * API helper Class
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      string    $obj    API Helper class
+	 */
+	private $api;
+
+	/**
+	 * Initialize the class and set its properties.
+	 *
+	 * @since    1.0.0
+	 * @param      string    $plugin_name       The name of this plugin.
+	 * @param      string    $version    The version of this plugin.
+	 */
+	public function __construct( $plugin_name, $version )
+	{
+		$this->plugin_name = $plugin_name;
+		$this->version = $version;
+		$this->api = new Weberp_Api();
+	}
+
+	/**
+	 * Register the stylesheets for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_styles()
+	{
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/weberp-admin.css', array(), $this->version, 'all' );
+	}
+
+	/**
+	 * Register the JavaScript for the admin area.
+	 *
+	 * @since    1.0.0
+	 */
+	public function enqueue_scripts()
+	{
+		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/weberp-admin.js', array( 'jquery' ), $this->version, false );
+	}
+
+	/**
+	 * Add the plugin settings page to WP menu at the very bottom
+	 *
+	 * @since    1.0.0
+	 */
+	public function create_plugin_settings_page()
+	{
+    $page_title = 'WebERP';
+    $menu_title = 'WebERP';
+    $capability = 'manage_options';
+    $slug = 'weberp_fields';
+    $callback = array( $this, 'plugin_settings_page_content' );
+    $icon = 'dashicons-admin-plugins';
+    $position = 100;
+
+    add_menu_page( $page_title, $menu_title, $capability, $slug, $callback, $icon, $position );
+	}
+
+	/**
+	 * Include the menu page template.
+	 * Template includes code to render the fields on the page
+	 *
+	 * @since    1.0.0
+	 */
+	public function plugin_settings_page_content()
+	{
+	  require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/partials/weberp-admin-display.php';
+	}
+
+	/**
+	 * Add the sections for the settings page
+	 *
+	 * @since    1.0.0
+	 */
+	public function setup_sections()
+	{
+	  add_settings_section( 'general', 'General', false, 'weberp_fields' );
+	}
+
+	/**
+	 * Add the fields to their respective sections
+	 * Array fields:
+	 *		uid 			Field id
+	 *		label 			Field name/label
+	 * 		section 		Section name the field belongs to
+	 * 		type			One of: text,textarea,select
+	 *		options 		Array of options for select fields in key => value format
+	 * 		placeholder 	Placeholder text
+	 *		helper 			Help text that show up next to the field
+	 *		supplemental	Text that shows up under each field
+	 * 		default 		Default text/value
+	 *
+	 * @since    1.0.0
+	 */
+	public function setup_fields()
+	{
+		// get_option('option_name') to get option value
+    $fields = array(
+    	array(
+        'uid' => 'api_url',
+        'label' => 'API Base URL',
+        'section' => 'general',
+        'type' => 'text',
+        'placeholder' => '',
+        'helper' => 'Your installation\'s API url',
+        'supplemental' => 'Include http(s) in the url',
+        'default' => ''
+	    ),
+      array(
+        'uid' => 'api_username',
+        'label' => 'API Username',
+        'section' => 'general',
+        'type' => 'text',
+        'placeholder' => '',
+        'helper' => 'Account email, unless advised otherwise',
+        'supplemental' => 'Case sensitive',
+        'default' => ''
+      ),
+      array(
+        'uid' => 'api_password',
+        'label' => 'API Password',
+        'section' => 'general',
+        'type' => 'password',
+        'placeholder' => '',
+        'helper' => '',
+        'supplemental' => 'Case sensitive',
+        'default' => ''
+	    ),
+	    array(
+        'uid' => 'enable_logging',
+        'label' => 'Enable Logging?',
+        'section' => 'general',
+        'type' => 'select',
+        'options' => [
+        	0 => 'No',
+        	1 => 'Yes',
+        ],
+        'placeholder' => '',
+        'helper' => '',
+        'supplemental' => '',
+        'default' => ''
+	    ),
+	    array(
+        'uid' => 'enable_live_stock',
+        'label' => 'Enable Live Stock Tracking?',
+        'section' => 'general',
+        'type' => 'select',
+        'options' => [
+        	0 => 'No',
+        	1 => 'Yes',
+        ],
+        'placeholder' => '',
+        'helper' => '',
+        'supplemental' => '',
+        'default' => '0'
+	    ),
+	    array(
+        'uid' => 'live_stock_type',
+        'label' => 'Live Stock Type',
+        'section' => 'general',
+        'type' => 'select',
+        'options' => [
+        	'link' => 'Clickable Link',
+        	'inline' => 'Inline Table',
+        ],
+        'placeholder' => '',
+        'helper' => '',
+        'supplemental' => '',
+        'default' => 'link'
+	    )
+    );
+
+    foreach( $fields as $field ){
+      add_settings_field( $field['uid'], $field['label'], array( $this, 'field_callback' ), 'weberp_fields', $field['section'], $field );
+      register_setting( 'weberp_fields', $field['uid'] );
+    }
+	}
+
+	/**
+	 * Function that renders each field on the page, based on its options
+	 *
+	 * @since    1.0.0
+	 */
+	public function field_callback( $arguments )
+	{
+    $value = get_option( $arguments['uid'] ); // Get the current value, if there is one
+    if( ! $value ) { // If no value exists
+      $value = $arguments['default']; // Set to our default
+    }
+
+    // Check which type of field we want
+    switch( $arguments['type'] ) {
+    	case 'password':
+      case 'text':
+        printf( '<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value );
+        break;
+      case 'textarea':
+        printf( '<textarea name="%1$s" id="%1$s" placeholder="%2$s" rows="5" cols="50">%3$s</textarea>', $arguments['uid'], $arguments['placeholder'], $value );
+        break;
+	    case 'select':
+        if( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
+          $options_markup = '';
+          foreach( $arguments['options'] as $key => $label ){
+            $options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key, selected( $value, $key, false ), $label );
+          }
+          printf( '<select name="%1$s" id="%1$s">%2$s</select>', $arguments['uid'], $options_markup );
+        }
+        break;
+    }
+
+    // If there is help text
+    if( $helper = $arguments['helper'] ){
+      printf( '<span class="helper"> %s</span>', $helper ); // Show it
+    }
+
+    // If there is supplemental text
+    if( $supplimental = $arguments['supplemental'] ){
+      printf( '<p class="description">%s</p>', $supplimental ); // Show it
+    }
+	}
+
+	/**
+	 * Add a custom barcode field
+	 * @return void
+	 */
+	public function add_product_custom_fields()
+	{
+		global $woocommerce, $post;
+		echo '<div class="product_custom_field barcode">';
+		
+		woocommerce_wp_text_input([
+      'id'          => '_barcode',
+      'label'       => __( 'Barcode', 'weberp' ),
+      'placeholder' => 'Barcode',
+      'desc_tip'    => 'true'
+	  ]);
+
+		echo '</div>';
+	}
+
+	/**
+	 * Update or save the barcode field text
+	 * @param  int $post_id Post/Product id
+	 * @return void
+	 */
+	public function save_product_custom_fields($post_id)
+	{
+		$barcode_field = $_POST['_barcode'];
+  	if (!empty($barcode_field)) {
+      update_post_meta($post_id, '_barcode', esc_attr($barcode_field));
+  	}
+	}
+
+	/**
+	 * Update a product using WebERP API
+	 * @param  int $post_id Post/Product id
+	 * @param  obj $post    Post/Product Object
+	 * @param  int $update  1 if updating, 0 if creating
+	 * @return void
+	 */
+	public function update_product($post_id, $post, $update)
+	{
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+	    return;
+	  }
+
+	  if($update) {
+	  	$this->api->updateProduct($post_id);
+	  }
+	}
+
+	/**
+	 * Update category using WebERP API
+	 * @param  int $term_id     Term id
+	 * @param  int $taxonomy_id Taxonomy id
+	 * @param  int $update      1 for update
+	 * @return void
+	 */
+	public function update_category($term_id, $taxonomy_id, $update)
+	{
+		if ($update) {
+			$this->api->updateCategory($term_id);
+		} else {
+			$this->api->createCategory($term_id);
+		}
+	}
+
+	/**
+	 * Create a new order using WebERP API
+	 * @param  int $order_id Order id to create
+	 * @return void
+	 */
+	public function new_order($order_id)
+	{
+		$this->api->createOrder($order_id);
+	}
+
+	/**
+	 * Mark an order as completed using WebERP API
+	 * @param  int $order_id Order id to update
+	 * @return void
+	 */
+	public function complete_order($order_id)
+	{
+		$this->api->completeOrder($order_id);
+	}
+
+	/**
+	 * Cancel/Delete and order using WebERP API
+	 * @param  int $order_id Order id to delete
+	 * @return void
+	 */
+	public function cancel_order($order_id)
+	{
+		$this->api->cancelOrder($order_id);
+	}
+
+	/**
+	 * Add custom action to order actions dropdown
+	 * @param  array  $actions Actions array
+	 * @return array           Final actions array
+	 */
+	public function action_send_order_to_weberp( $actions )
+	{
+	  $actions['send_order_to_weberp'] = __( 'Send to WebERP', 'weberp' );
+	  return $actions;
+	}
+
+	/**
+	 * Execute the new_order function. Used by the order actions dropdown
+	 * @param  object $order Order object
+	 * @return void
+	 */
+	public function send_order_to_weberp( $order )
+	{
+		$existing_order_id = $this->api->getItemId($order->get_id(), 'Orders');
+
+		if (!$existing_order_id) {
+	   	$this->new_order($order->get_id());
+	  }
+	}
+
+	public function attribute_added($id, $data)
+	{
+		$this->api->createAttribute($id, $data);
+	}
+
+	public function attribute_updated($id, $data, $old_slug)
+	{
+		$this->api->updateAttribute($id, $data);
+	}
+
+	public function attribute_deleted($id, $data, $taxonomy)
+	{
+		$this->api->deleteAttribute($id);
+	}
+
+	public function term_created( $term_id, $tt_id, $taxonomy )
+	{
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+		foreach($attribute_taxonomies as $item) {
+			if('pa_' . $item->attribute_name == $taxonomy) {
+				$this->api->createValue($item->attribute_id, get_term($term_id));
+			}
+		}
+	}
+
+	public function term_updated( $term_id, $taxonomy )
+	{
+		$attribute_taxonomies = wc_get_attribute_taxonomies();
+		foreach($attribute_taxonomies as $item) {
+			if('pa_' . $item->attribute_name == $taxonomy) {
+				$this->api->updateValue(get_term($term_id));
+			}
+		}
+	}
+
+	public function term_deleted( $term_id, $tt_id, $deleted_term, $ids )
+	{
+		$this->api->deleteValue($term_id);
+	}
+
+}
