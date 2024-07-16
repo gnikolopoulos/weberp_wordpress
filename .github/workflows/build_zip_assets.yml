@@ -1,0 +1,20 @@
+name: Generate Installable Plugin, and Upload as Release Asset
+on:
+  release:
+    types: [published]
+jobs:
+  build:
+    name: Generate and Upload
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Package Plugin
+        run: |
+            cd ${{github.workspace}}
+            git archive -o weberp.zip HEAD --prefix=weberp/
+            gh release upload ${{github.event.release.tag_name}} weberp.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
