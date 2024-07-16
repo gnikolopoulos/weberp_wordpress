@@ -80,7 +80,7 @@ class Weberp_Public
     /**
      * Add the container div and template used to render the table.
      *
-     * @since    1.0.0
+     * @since    1.1.0
      */
     public function add_stock_container()
     {
@@ -96,7 +96,7 @@ class Weberp_Public
     /**
      * Add the stock analysis table.
      *
-     * @since    1.0.0
+     * @since    1.2.0
      */
     public function add_stock_table()
     {
@@ -130,7 +130,7 @@ class Weberp_Public
     /**
      * Add the clickable link next to the availability text.
      *
-     * @since    1.0.0
+     * @since    1.1.0
      */
     public function add_stock_link( $availability_text, $product )
     {
@@ -147,7 +147,7 @@ class Weberp_Public
     /**
      * Request the current product info from WebERP and return the stock entries.
      *
-     * @since    1.0.0
+     * @since    1.1.0
      */
     public function get_live_stock()
     {
