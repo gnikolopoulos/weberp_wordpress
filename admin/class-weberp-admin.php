@@ -267,6 +267,7 @@ class Weberp_Admin
 
 	/**
 	 * Add a custom barcode field
+	 *
 	 * @return void
 	 */
 	public function add_product_custom_fields()
@@ -286,6 +287,7 @@ class Weberp_Admin
 
 	/**
 	 * Update or save the barcode field text
+	 *
 	 * @param  int $post_id Post/Product id
 	 * @return void
 	 */
@@ -299,6 +301,7 @@ class Weberp_Admin
 
 	/**
 	 * Update a product using WebERP API
+	 *
 	 * @param  int $post_id Post/Product id
 	 * @param  obj $post    Post/Product Object
 	 * @param  int $update  1 if updating, 0 if creating
@@ -317,9 +320,10 @@ class Weberp_Admin
 
 	/**
 	 * Update category using WebERP API
-	 * @param  int $term_id     Term id
-	 * @param  int $taxonomy_id Taxonomy id
-	 * @param  int $update      1 for update
+	 *
+	 * @param  int    $term_id        Term id
+	 * @param  int    $taxonomy_id    Taxonomy id
+	 * @param  int    $update         1 for update
 	 * @return void
 	 */
 	public function update_category($term_id, $taxonomy_id, $update)
@@ -333,7 +337,10 @@ class Weberp_Admin
 
 	/**
 	 * Create a new order using WebERP API
-	 * @param  int $order_id Order id to create
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_thankyou
+	 *
+	 * @param  int    $order_id    Order id to create
 	 * @return void
 	 */
 	public function new_order($order_id)
@@ -343,30 +350,44 @@ class Weberp_Admin
 
 	/**
 	 * Mark an order as completed using WebERP API
-	 * @param  int $order_id Order id to update
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_order_status_(to)
+	 *
+	 * @param  int         $order_id             Order id to update
+	 * @param  WC_Order    $order                Order object.
+	 * @param  array       $status_transition    Status transition data.
 	 * @return void
 	 */
-	public function complete_order($order_id)
+	public function complete_order($order_id, $order, $status_transition)
 	{
 		$this->api->completeOrder($order_id);
 	}
 
 	/**
 	 * Cancel/Delete and order using WebERP API
-	 * @param  int $order_id Order id to delete
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_order_status_(to)
+	 *
+	 * @param  int         $order_id             Order id to delete
+	 * @param  WC_Order    $order                Order object.
+	 * @param  array       $status_transition    Status transition data.
 	 * @return void
 	 */
-	public function cancel_order($order_id)
+	public function cancel_order($order_id, $order, $status_transition)
 	{
 		$this->api->cancelOrder($order_id);
 	}
 
 	/**
 	 * Add custom action to order actions dropdown
-	 * @param  array  $actions Actions array
-	 * @return array           Final actions array
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_order_actions
+	 *
+	 * @param  array            $actions    Actions array
+	 * @param  WC_Order|null    $order      The order object or null if no order is available.
+	 * @return array                        Final actions array
 	 */
-	public function action_send_order_to_weberp( $actions )
+	public function action_send_order_to_weberp( $actions, $order )
 	{
 	  $actions['send_order_to_weberp'] = __( 'Send to WebERP', 'weberp' );
 	  return $actions;
@@ -374,6 +395,7 @@ class Weberp_Admin
 
 	/**
 	 * Execute the new_order function. Used by the order actions dropdown
+	 *
 	 * @param  object $order Order object
 	 * @return void
 	 */
@@ -386,22 +408,62 @@ class Weberp_Admin
 	  }
 	}
 
+	/**
+	 * Execute the createAttribute function. Used when a new attribute is created
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_attribute_added
+	 *
+	 * @param  int    $id    Attribute ID
+	 * @param  array  $data  Attribute data
+	 * @return void
+	 */
 	public function attribute_added($id, $data)
 	{
 		$this->api->createAttribute($id, $data);
 	}
 
+	/**
+	 * Execute the updateAttribute function. Used when an existing attribute is updated
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_attribute_updated
+	 *
+	 * @param  int       $id          Attribute ID
+	 * @param  array     $data        Attribute data array
+	 * @param  string    $old_slug    Old attribute slug
+	 * @return void
+	 */
 	public function attribute_updated($id, $data, $old_slug)
 	{
 		$this->api->updateAttribute($id, $data);
 	}
 
-	public function attribute_deleted($id, $data, $taxonomy)
+	/**
+	 * Execute the deleteAttribute function. Used when an existing attribute is deleted
+	 *
+	 * @link   https://wp-kama.com/plugin/woocommerce/hook/woocommerce_attribute_deleted
+	 *
+	 * @param  int       $id          Attribute ID
+	 * @param  string    $name        Attribute name
+	 * @param  string    $taxonomy    Attribute taxonomy name
+	 * @return void
+	 */
+	public function attribute_deleted($id, $name, $taxonomy)
 	{
 		$this->api->deleteAttribute($id);
 	}
 
-	public function term_created( $term_id, $tt_id, $taxonomy )
+	/**
+	 * Execute the createValue function. Used when a new attribute term is created
+	 *
+	 * @link   https://developer.wordpress.org/reference/hooks/create_term/
+	 *
+	 * @param  int       $term_id     Term ID
+	 * @param  int       $tt_id       Term taxonomy ID
+	 * @param  string    $taxonomy    Term taxonomy slug
+	 * @param  array     $args        Arguments passed to wp_insert_term()
+	 * @return void
+	 */
+	public function term_created( $term_id, $tt_id, $taxonomy, $args )
 	{
 		$attribute_taxonomies = wc_get_attribute_taxonomies();
 		foreach($attribute_taxonomies as $item) {
@@ -411,7 +473,17 @@ class Weberp_Admin
 		}
 	}
 
-	public function term_updated( $term_id, $taxonomy )
+	/**
+	 * Execute the updateValue function. Used when an existing attribute term is updated
+	 *
+	 * @link   https://developer.wordpress.org/reference/hooks/edited_terms/
+	 *
+	 * @param  int       $term_id     Term ID
+	 * @param  string    $taxonomy    Taxonomy slug
+	 * @param  array     $args        Arguments passed to wp_update_term()
+	 * @return void
+	 */
+	public function term_updated( $term_id, $taxonomy, $args )
 	{
 		$attribute_taxonomies = wc_get_attribute_taxonomies();
 		foreach($attribute_taxonomies as $item) {
@@ -421,7 +493,19 @@ class Weberp_Admin
 		}
 	}
 
-	public function term_deleted( $term_id, $tt_id, $deleted_term, $ids )
+	/**
+	 * Execute the deleteValue function. Used when an existing attribute term is deleted
+	 *
+	 * @link   https://developer.wordpress.org/reference/hooks/delete_term/
+	 *
+	 * @param  int        $term_id         Term ID
+	 * @param  int        $tt_id           Term taxonomy ID
+	 * @param  string     $slug            Taxonomy slug.
+	 * @param  WP_Term    $deleted_term    Copy of the already-deleted term
+	 * @param  array      $ids             List of term object IDs
+	 * @return void
+	 */
+	public function term_deleted( $term_id, $tt_id, $slug, $deleted_term, $ids )
 	{
 		$this->api->deleteValue($term_id);
 	}

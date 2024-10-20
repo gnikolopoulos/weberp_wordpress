@@ -173,16 +173,16 @@ class Weberp
 		$this->loader->add_action( 'woocommerce_order_status_completed', $plugin_admin, 'complete_order', 20, 3 );
 		$this->loader->add_action( 'woocommerce_order_status_cancelled', $plugin_admin, 'cancel_order', 20, 3 );
 
-		$this->loader->add_action( 'woocommerce_order_actions', $plugin_admin, 'action_send_order_to_weberp' );
+		$this->loader->add_action( 'woocommerce_order_actions', $plugin_admin, 'action_send_order_to_weberp', 10, 2 );
 		$this->loader->add_action( 'woocommerce_order_action_send_order_to_weberp', $plugin_admin, 'send_order_to_weberp' );
 
 		$this->loader->add_action( 'woocommerce_attribute_added', $plugin_admin, 'attribute_added', 10, 2 );
 		$this->loader->add_action( 'woocommerce_attribute_updated', $plugin_admin, 'attribute_updated', 10, 3 );
 		$this->loader->add_action( 'woocommerce_attribute_deleted', $plugin_admin, 'attribute_deleted', 10, 3 );
 
-		$this->loader->add_action( 'create_term', $plugin_admin, 'term_created', 10, 3 );
-		$this->loader->add_action( 'edited_terms', $plugin_admin, 'term_updated', 10, 2 );
-		$this->loader->add_action( 'delete_term', $plugin_admin, 'term_deleted', 10, 4 );
+		$this->loader->add_action( 'create_term', $plugin_admin, 'term_created', 10, 4 );
+		$this->loader->add_action( 'edited_terms', $plugin_admin, 'term_updated', 10, 3 );
+		$this->loader->add_action( 'delete_term', $plugin_admin, 'term_deleted', 10, 5 );
 	}
 
 	/**

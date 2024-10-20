@@ -70,6 +70,13 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Gor a given entity ID in wordpress, get the WebERP match
+	 *
+	 * @param  int    $wp_id    Eintity ID in WP
+	 * @param  string $model    Entity model type
+	 * @return mixed            Item ID in WebERP or false on error
+	 */
 	public function getItemId($wp_id, $model)
 	{
 		$token = get_transient('weberp_login_token');
@@ -101,6 +108,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Update category in WebERP
+	 *
+	 * @param  int    $category_id    Wordpress category id
+	 * @return mixed
+	 */
 	public function updateCategory($category_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -154,6 +167,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Create a new category in WebERP
+	 *
+	 * @param  int    $category_id    Wordpress categoryID
+	 * @return mixed
+	 */
 	public function createCategory($category_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -203,6 +222,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Create a new order in WebERP
+	 *
+	 * @param  int    $order_id    WooCommerce order ID
+	 * @return mixed
+	 */
 	public function createOrder($order_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -303,6 +328,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Mark an order as Complete in WebERP
+	 *
+	 * @param  int    $order_id    WooCommerce order id
+	 * @return mixed
+	 */
 	public function completeOrder($order_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -346,6 +377,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Delete an order from WebERP
+	 *
+	 * @param  int    $order_id    WooCommerce order id
+	 * @return mixed
+	 */
 	public function cancelOrder($order_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -384,6 +421,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Get product data using WebERP API
+	 *
+	 * @param  int    $product_id    WooCommerce product id
+	 * @return mixed
+	 */
 	public function getProduct($product_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -422,6 +465,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Update a product in WebERP
+	 *
+	 * @param  int    $product_id    WooCommerce product id
+	 * @return mixed
+	 */
 	public function updateProduct($product_id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -554,6 +603,13 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Create a new attribute in WebERP
+	 *
+	 * @param  int    $id    WooCommerce attribute id
+	 * @param  array  $data  WooCommerce attribute data array
+	 * @return mixed
+	 */
 	public function createAttribute($id, $data)
 	{
 		$token = get_transient('weberp_login_token');
@@ -594,6 +650,13 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Update an existing attribute in WebERP
+	 *
+	 * @param  int    $id    WooCommerce attribute id
+	 * @param  array  $data  WooCommerce attribute data array
+	 * @return mixed
+	 */
 	public function updateAttribute($id, $data)
 	{
 		$token = get_transient('weberp_login_token');
@@ -637,6 +700,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Delete an existing attribute in WebERP
+	 *
+	 * @param  int    $id    WooCommerce attribute id
+	 * @return mixed
+	 */
 	public function deleteAttribute($id)
 	{
 		$token = get_transient('weberp_login_token');
@@ -675,6 +744,13 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Create a new attribute value in WebERP
+	 *
+	 * @param  int    $attribute_id    WooCommerce attribute id
+	 * @param  array  $term            WooCommerce term object
+	 * @return mixed
+	 */
 	public function createValue($attribute_id, $term)
 	{
 		$token = get_transient('weberp_login_token');
@@ -718,6 +794,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Update an existing attribute value in WebERP
+	 *
+	 * @param  array  $term            WooCommerce term object
+	 * @return mixed
+	 */
 	public function updateValue($term)
 	{
 		$token = get_transient('weberp_login_token');
@@ -760,6 +842,12 @@ class Weberp_Api
 		}
 	}
 
+	/**
+	 * Delete an existing attribute value in WebERP
+	 *
+	 * @param  int    $term_id    WooCommerce term id
+	 * @return mixed
+	 */
 	public function deleteValue($term_id)
 	{
 		$token = get_transient('weberp_login_token');
