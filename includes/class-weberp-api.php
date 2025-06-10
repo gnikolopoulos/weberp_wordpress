@@ -267,14 +267,14 @@ class Weberp_Api
 		foreach ($order->get_fees() as $fee) {
 			$order_fees[] = array(
 				'name' => $fee->get_name(),
-				'price' => $fee->get_total() + $fee->get_total_tax(),
+				'price' => (float)$fee->get_total() + (float)$fee->get_total_tax(),
 			);
 		}
 		
 		foreach ($order->get_shipping_methods() as $sm) {
 			$order_fees[] = array(
 				'name' => $sm->get_name(),
-				'price' => $sm->get_total() + $sm->get_total_tax(),
+				'price' => (float)$sm->get_total() + (float)$sm->get_total_tax(),
 			);
 		}
 

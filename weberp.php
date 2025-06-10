@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://www.interactive-design.gr
- * @since             1.3.0
+ * @since             1.0.0
  * @package           Weberp
  *
  * @wordpress-plugin
  * Plugin Name:       WebERP
  * Plugin URI:        https://www.interactive-design.gr
  * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Author:            George Nikolopoulos
  * Author URI:        https://www.interactive-design.gr
  * License:           GPL-2.0+
