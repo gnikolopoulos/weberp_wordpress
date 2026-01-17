@@ -225,10 +225,10 @@ class Weberp_Api
 	/**
 	 * Create a new order in WebERP
 	 *
-	 * @param  int    $order_id    WooCommerce order ID
+	 * @param  WC_Order    $order    WooCommerce order object
 	 * @return mixed
 	 */
-	public function createOrder($order_id)
+	public function createOrder($order)
 	{
 		$token = get_transient('weberp_login_token');
 		if ($token === false) {
@@ -239,7 +239,12 @@ class Weberp_Api
 			return false;
 		}
 
-		$order = wc_get_order($order_id);
+		$existing_order_id = $this->api->getItemId($order->get_id(), 'Orders');
+		if ($existing_order_id) {
+			return true;
+		}
+
+		$order = wc_get_order($order->get_id());
 
 		$order_items = array();
 		foreach ($order->get_items() as $item) {
@@ -248,6 +253,7 @@ class Weberp_Api
 				return;
 			}
 
+			$erp_variation_id = false;
 			if ($item->get_variation_id() != 0) {
 				$erp_variation_id = $this->getItemId($item->get_variation_id(), 'Variations');
 				if (!$erp_variation_id) {
@@ -290,7 +296,7 @@ class Weberp_Api
 			'body' => json_encode(array(
 				"order" => array(
 					"code" => $order->get_id(),
-					"id" => $order_id,
+					"id" => $order->get_id(),
 					"customer" => array(
 						"first_name" => $order->get_billing_first_name(),
 						"last_name" => $order->get_billing_last_name(),
