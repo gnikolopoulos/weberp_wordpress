@@ -169,7 +169,8 @@ class Weberp
 		$this->loader->add_action( 'save_post_product', $plugin_admin, 'update_product', 20, 3 );
 		$this->loader->add_action( 'saved_product_cat', $plugin_admin, 'update_category', 20, 3 );
 
-		$this->loader->add_action( 'woocommerce_thankyou', $plugin_admin, 'new_order', 20, 3 );
+		$this->loader->add_action( 'woocommerce_checkout_order_created', $plugin_admin, 'new_order', 20 );
+		$this->loader->add_action( 'woocommerce_store_api_checkout_order_processed', $plugin_admin, 'new_order', 20 );
 		$this->loader->add_action( 'woocommerce_order_status_completed', $plugin_admin, 'complete_order', 20, 3 );
 		$this->loader->add_action( 'woocommerce_order_status_cancelled', $plugin_admin, 'cancel_order', 20, 3 );
 
