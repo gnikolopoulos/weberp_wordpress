@@ -173,6 +173,7 @@ class Weberp
 		$this->loader->add_action( 'woocommerce_store_api_checkout_order_processed', $plugin_admin, 'new_order', 20 );
 		$this->loader->add_action( 'woocommerce_order_status_completed', $plugin_admin, 'complete_order', 20, 3 );
 		$this->loader->add_action( 'woocommerce_order_status_cancelled', $plugin_admin, 'cancel_order', 20, 3 );
+		$this->loader->add_action( 'woocommerce_order_status_failed', $plugin_admin, 'cancel_order', 20, 3 );
 
 		$this->loader->add_action( 'woocommerce_order_actions', $plugin_admin, 'action_send_order_to_weberp', 10, 2 );
 		$this->loader->add_action( 'woocommerce_order_action_send_order_to_weberp', $plugin_admin, 'send_order_to_weberp' );
