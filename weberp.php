@@ -16,7 +16,7 @@
  * Plugin Name:       WebERP
  * Plugin URI:        https://www.interactive-design.gr
  * Description:       Companion plugin to integrate with a WebERP API instance
- * Version:           1.5.0
+ * Version:           1.5.1
  * Author:            George Nikolopoulos
  * Author URI:        https://www.interactive-design.gr
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'WEBERP_VERSION', '1.4.0' );
+define( 'WEBERP_VERSION', '1.5.1' );
 
 /**
  * The code that runs during plugin activation.

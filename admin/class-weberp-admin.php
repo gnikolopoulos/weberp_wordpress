@@ -230,10 +230,10 @@ class Weberp_Admin
 	 */
 	public function setup_endpoint()
 	{
-		register_rest_route('weberp/v1', '/media', [
+		register_rest_route('wc/v3', '/weberp/media', [
       'methods'             => WP_REST_Server::READABLE,
       'callback'            => [$this, 'weberp_find_media_by_filename'],
-      'permission_callback' => '__return_true',
+      'permission_callback' => [$this, 'weberp_media_permission'],
       'args'                => [
         'filename' => [
           'required'          => true,
@@ -535,6 +535,17 @@ class Weberp_Admin
 		$this->api->deleteValue($term_id);
 	}
 
+	/**
+	 * Handle custom endpoint authentication
+	 *
+	 * @param  WP_REST_Request    $request    The request oblect
+	 * @return bool
+	 */
+	public function weberp_media_permission(WP_REST_Request $request)
+	{
+		return current_user_can('manage_woocommerce');
+	}
+
    /**
    * Find a Media Library attachment by exact filename.
    *
@@ -555,21 +566,16 @@ class Weberp_Admin
       );
     }
 
-    $sql = $wpdb->prepare(
-      "
-      SELECT p.ID
-      FROM {$wpdb->posts} p
-      INNER JOIN {$wpdb->postmeta} pm
-          ON pm.post_id = p.ID
-          AND pm.meta_key = '_wp_attached_file'
-      WHERE p.post_type = 'attachment'
-        AND LOWER(SUBSTRING_INDEX(pm.meta_value, '/', -1)) = LOWER(%s)
-      LIMIT 1
-      ",
-      $filename
+    $attachment_id = $wpdb->get_var(
+      $wpdb->prepare(
+        "SELECT post_id
+        FROM {$wpdb->postmeta}
+        WHERE meta_key = '_wp_attached_file'
+          AND meta_value LIKE %s
+        LIMIT 1",
+        '%/' . $wpdb->esc_like($filename)
+      )
     );
-
-    $attachment_id = $wpdb->get_var($sql);
 
     if (!$attachment_id) {
       return new WP_Error(
