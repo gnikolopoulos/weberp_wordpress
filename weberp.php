@@ -16,7 +16,7 @@
  * Plugin Name:       WebERP
  * Plugin URI:        https://www.interactive-design.gr
  * Description:       Companion plugin to integrate with a WebERP API instance
- * Version:           1.4.0
+ * Version:           1.5.0
  * Author:            George Nikolopoulos
  * Author URI:        https://www.interactive-design.gr
  * License:           GPL-2.0+

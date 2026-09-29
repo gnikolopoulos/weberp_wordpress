@@ -163,6 +163,8 @@ class Weberp
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_sections' );
 		$this->loader->add_action( 'admin_init', $plugin_admin, 'setup_fields' );
 
+		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'setup_endpoint' );
+
 		$this->loader->add_action( 'woocommerce_product_options_general_product_data', $plugin_admin, 'add_product_custom_fields' );
 		$this->loader->add_action( 'woocommerce_process_product_meta', $plugin_admin, 'save_product_custom_fields');
 

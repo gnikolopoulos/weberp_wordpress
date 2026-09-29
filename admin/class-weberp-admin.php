@@ -223,6 +223,31 @@ class Weberp_Admin
 	}
 
 	/**
+	 * Setup a new REST API endpoint to check media files
+	 * Endpoint is '/wp-json/weberp/v1/media'
+	 *
+	 * @return void
+	 */
+	public function setup_endpoint()
+	{
+		register_rest_route('weberp/v1', '/media', [
+      'methods'             => WP_REST_Server::READABLE,
+      'callback'            => [$this, 'weberp_find_media_by_filename'],
+      'permission_callback' => '__return_true',
+      'args'                => [
+        'filename' => [
+          'required'          => true,
+          'type'              => 'string',
+          'sanitize_callback' => 'sanitize_file_name',
+          'validate_callback' => function ($value) {
+            return is_string($value) && $value !== '';
+          },
+        ],
+      ],
+    ]);
+	}
+
+	/**
 	 * Function that renders each field on the page, based on its options
 	 *
 	 * @since    1.0.0
@@ -508,6 +533,63 @@ class Weberp_Admin
 	public function term_deleted( $term_id, $tt_id, $slug, $deleted_term, $ids )
 	{
 		$this->api->deleteValue($term_id);
+	}
+
+   /**
+   * Find a Media Library attachment by exact filename.
+   *
+   * @param  WP_REST_Request    $request    The request object
+   * @return mixed
+   */
+  public function weberp_find_media_by_filename(WP_REST_Request $request)
+  {
+    global $wpdb;
+
+    $filename = $request->get_param('filename');
+
+    if (!$filename) {
+      return new WP_Error(
+        'missing_filename',
+        'Filename is required.',
+        ['status' => 400]
+      );
+    }
+
+    $sql = $wpdb->prepare(
+      "
+      SELECT p.ID
+      FROM {$wpdb->posts} p
+      INNER JOIN {$wpdb->postmeta} pm
+          ON pm.post_id = p.ID
+          AND pm.meta_key = '_wp_attached_file'
+      WHERE p.post_type = 'attachment'
+        AND LOWER(SUBSTRING_INDEX(pm.meta_value, '/', -1)) = LOWER(%s)
+      LIMIT 1
+      ",
+      $filename
+    );
+
+    $attachment_id = $wpdb->get_var($sql);
+
+    if (!$attachment_id) {
+      return new WP_Error(
+        'media_not_found',
+        'No media attachment found with that filename.',
+        [
+          'status'   => 404,
+          'filename' => $filename,
+        ]
+      );
+    }
+
+    $attachment_id = (int) $attachment_id;
+
+    return rest_ensure_response([
+      'id'         => $attachment_id,
+      'filename'   => basename(get_attached_file($attachment_id)),
+      'source_url' => wp_get_attachment_url($attachment_id),
+      'mime_type'  => get_post_mime_type($attachment_id),
+    ]);
 	}
 
 }
