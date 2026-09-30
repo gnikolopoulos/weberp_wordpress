@@ -225,10 +225,10 @@ class Weberp_Api
 	/**
 	 * Create a new order in WebERP
 	 *
-	 * @param  WC_Order    $order    WooCommerce order object
+	 * @param  int    $order_id    WooCommerce order id
 	 * @return mixed
 	 */
-	public function createOrder($order)
+	public function createOrder($order_id)
 	{
 		$token = get_transient('weberp_login_token');
 		if ($token === false) {
@@ -239,12 +239,12 @@ class Weberp_Api
 			return false;
 		}
 
-		$existing_order_id = $this->getItemId($order->get_id(), 'Orders');
+		$existing_order_id = $this->getItemId($order_id, 'Orders');
 		if ($existing_order_id) {
 			return true;
 		}
 
-		$order = wc_get_order($order->get_id());
+		$order = wc_get_order($order_id);
 
 		$order_items = array();
 		foreach ($order->get_items() as $item) {
