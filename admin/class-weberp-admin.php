@@ -338,6 +338,18 @@ class Weberp_Admin
 	    return;
 	  }
 
+	  if (defined('REST_REQUEST') && REST_REQUEST) {
+      return;
+    }
+
+    if (wp_is_post_revision($post_id)) {
+      return;
+    }
+
+    if (!is_admin()) {
+      return;
+    }
+
 	  if($update) {
 	  	$this->api->updateProduct($post_id);
 	  }
