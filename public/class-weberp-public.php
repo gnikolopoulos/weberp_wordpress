@@ -120,8 +120,8 @@ class Weberp_Public
 
         foreach ($erp_product_data->product->stock as $item) {
             echo '<tr>
-                    <td class="warehouse">'.$item->warehouse.'</td>
-                    <td class="qty">'.$item->stock.'</td>
+                    <td class="warehouse">'.esc_html($item->warehouse).'</td>
+                    <td class="qty">'.esc_html($item->stock).'</td>
                 </tr>';
         }
         echo '</tbody></table></div>';
@@ -151,12 +151,20 @@ class Weberp_Public
      */
     public function get_live_stock()
     {
-        if ( !wp_verify_nonce( $_REQUEST['nonce'], 'live_stock_nonce')) {
+        if (!isset($_REQUEST['nonce'])) {
+            exit("Nonce missing");
+        }
+
+        if (!wp_verify_nonce( sanitize_text_field(wp_unslash($_REQUEST['nonce'])), 'live_stock_nonce')) {
             exit("No naughty business please");
         }
 
+        if (!isset($_REQUEST['product_id'])) {
+            exit("Missing product id information");
+        }
+
         $weberp_api = new Weberp_Api();
-        $erp_product_data = $weberp_api->getProduct($_REQUEST['product_id']);
+        $erp_product_data = $weberp_api->getProduct(sanitize_text_field(wp_unslash($_REQUEST['product_id'])));
         if (!$erp_product_data) {
             echo false;
         }

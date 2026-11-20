@@ -76,7 +76,6 @@ class Weberp
 		$this->plugin_name = 'weberp';
 
 		$this->load_dependencies();
-		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
 	}
@@ -106,12 +105,6 @@ class Weberp
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-weberp-loader.php';
 
 		/**
-		 * The class responsible for defining internationalization functionality
-		 * of the plugin.
-		 */
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-weberp-i18n.php';
-
-		/**
 		 * The class responsible for communicating with the WebERP API
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-weberp-api.php';
@@ -127,22 +120,6 @@ class Weberp
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-weberp-public.php';
 
 		$this->loader = new Weberp_Loader();
-	}
-
-	/**
-	 * Define the locale for this plugin for internationalization.
-	 *
-	 * Uses the Weberp_i18n class in order to set the domain and to register the hook
-	 * with WordPress.
-	 *
-	 * @since    1.0.0
-	 * @access   private
-	 */
-	private function set_locale()
-	{
-		$plugin_i18n = new Weberp_i18n();
-
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 	}
 
 	/**

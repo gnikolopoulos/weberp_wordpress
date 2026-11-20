@@ -16,7 +16,7 @@
  * Plugin Name:       WebERP
  * Plugin URI:        https://www.interactive-design.gr
  * Description:       Companion plugin to integrate with a WebERP API instance
- * Version:           1.5.1
+ * Version:           1.5.2
  * Author:            George Nikolopoulos
  * Author URI:        https://www.interactive-design.gr
  * License:           GPL-2.0+
@@ -35,13 +35,13 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'WEBERP_VERSION', '1.5.1' );
+define( 'WEBERP_VERSION', '1.5.2' );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-weberp-activator.php
  */
-function activate_weberp()
+function weberp_activate()
 {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-weberp-activator.php';
 	Weberp_Activator::activate();
@@ -51,14 +51,14 @@ function activate_weberp()
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-weberp-deactivator.php
  */
-function deactivate_weberp()
+function weberp_deactivate()
 {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-weberp-deactivator.php';
 	Weberp_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_weberp' );
-register_deactivation_hook( __FILE__, 'deactivate_weberp' );
+register_activation_hook( __FILE__, 'weberp_activate' );
+register_deactivation_hook( __FILE__, 'weberp_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -75,10 +75,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-weberp.php';
  *
  * @since    1.0.0
  */
-function run_weberp()
+function weberp_run()
 {
 	$plugin = new Weberp();
 	$plugin->run();
 }
 
-run_weberp();
+weberp_run();

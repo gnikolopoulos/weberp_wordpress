@@ -216,9 +216,9 @@ class Weberp_Admin
 	    )
     );
 
-    foreach( $fields as $field ){
+    foreach( $fields as $field ) {
       add_settings_field( $field['uid'], $field['label'], array( $this, 'field_callback' ), 'weberp_fields', $field['section'], $field );
-      register_setting( 'weberp_fields', $field['uid'] );
+      register_setting( 'weberp_fields', $field['uid'], ['type' => 'string'] );
     }
 	}
 
@@ -263,30 +263,30 @@ class Weberp_Admin
     switch( $arguments['type'] ) {
     	case 'password':
       case 'text':
-        printf( '<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" />', $arguments['uid'], $arguments['type'], $arguments['placeholder'], $value );
+        printf( '<input name="%1$s" id="%1$s" type="%2$s" placeholder="%3$s" value="%4$s" />', esc_html($arguments['uid']), esc_html($arguments['type']), esc_html($arguments['placeholder']), esc_html($value) );
         break;
       case 'textarea':
-        printf( '<textarea name="%1$s" id="%1$s" placeholder="%2$s" rows="5" cols="50">%3$s</textarea>', $arguments['uid'], $arguments['placeholder'], $value );
+        printf( '<textarea name="%1$s" id="%1$s" placeholder="%2$s" rows="5" cols="50">%3$s</textarea>', esc_html($arguments['uid']), esc_html($arguments['placeholder']), esc_html($value) );
         break;
 	    case 'select':
         if( ! empty ( $arguments['options'] ) && is_array( $arguments['options'] ) ){
-          $options_markup = '';
+          $options_markup_escaped = '';
           foreach( $arguments['options'] as $key => $label ){
-            $options_markup .= sprintf( '<option value="%s" %s>%s</option>', $key, selected( $value, $key, false ), $label );
+            $options_markup_escaped .= sprintf( '<option value="%s" %s>%s</option>', esc_html($key), selected( $value, $key, false ), esc_html($label) );
           }
-          printf( '<select name="%1$s" id="%1$s">%2$s</select>', $arguments['uid'], $options_markup );
+          printf( '<select name="%1$s" id="%1$s">%2$s</select>', esc_html($arguments['uid']), wp_kses($options_markup_escaped, ['option' => []]) );
         }
         break;
     }
 
     // If there is help text
     if( $helper = $arguments['helper'] ){
-      printf( '<span class="helper"> %s</span>', $helper ); // Show it
+      printf( '<span class="helper"> %s</span>', esc_html($helper) ); // Show it
     }
 
     // If there is supplemental text
     if( $supplimental = $arguments['supplemental'] ){
-      printf( '<p class="description">%s</p>', $supplimental ); // Show it
+      printf( '<p class="description">%s</p>', esc_html($supplimental) ); // Show it
     }
 	}
 
@@ -318,7 +318,11 @@ class Weberp_Admin
 	 */
 	public function save_product_custom_fields($post_id)
 	{
-		$barcode_field = $_POST['_barcode'];
+		if (!isset($_POST['_barcode'])) {
+			return;
+		}
+
+		$barcode_field = sanitize_text_field(wp_unslash($_POST['_barcode']));
   	if (!empty($barcode_field)) {
       update_post_meta($post_id, '_barcode', esc_attr($barcode_field));
   	}
